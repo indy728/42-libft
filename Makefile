@@ -6,13 +6,18 @@
 #    By: kmurray <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/12/01 23:11:45 by kmurray           #+#    #+#              #
-#    Updated: 2016/12/21 11:55:42 by kmurray          ###   ########.fr        #
+#    Updated: 2016/12/21 12:55:16 by kmurray          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME= libft.a
 
-SRCS= ft_itoa.c\
+CC= gcc
+CFLAGS+= -Wall -Werror -Wextra
+
+SRCS_PATH= ./src/
+
+SRC_NAME+= ft_itoa.c\
 	  ft_memdup.c\
 	  ft_strcmp.c\
 	  ft_strncpy.c\
@@ -80,25 +85,31 @@ SRCS= ft_itoa.c\
 	  ft_strncmp.c\
 	  ft_power_of.c
 
-OBJS= *.o
+SRC = $(addprefix $(SRCS_PATH),$(SRC_NAME))
 
-CC= gcc
+OBJ_PATH = ./obj/
 
-CFLAGS= -Wall -Werror -Wextra -c -I.
+OBJ_NAME = $(SRC_NAME:.c=.o)
 
-RM= /bin/rm -f
+OBJ = $(addprefix $(OBJ_PATH),$(OBJ_NAME))
+
+INC_PATH = ./includes/
+INC = $(addprefix -I,$(INC_PATH))
 
 all: $(NAME)
 
-$(NAME):
-	$(CC) $(CFLAGS) $(SRCS)
-	ar rc $(NAME) $(OBJS)
-	ranlib $(NAME)
+$(OBJ_PATH)%.o: $(SRCS_PATH)/%.c
+	@mkdir -p $(OBJ_PATH)
+	@$(CC) $(CFLAGS) $(INC) -o $@ -c $<
+
+$(NAME): $(OBJ)
+	@ar -rc $(NAME) $?
+	@ranlib $(NAME)
 
 clean:
-	$(RM) $(OBJS)
+	@rm -rf $(OBJ_PATH)
 
 fclean: clean
-	$(RM) $(NAME)
+	@rm -rf $(NAME)
 
 re: fclean all
